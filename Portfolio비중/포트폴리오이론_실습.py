@@ -59,4 +59,16 @@ df = df[['returns','risk','sharpe_ratio']+[s for s in stock_list]] # 이거 왜�
 df.plot.scatter(x='risk',y='returns', figsize = (20,14), grid=True)
 plt.title('Efficient Frontier')
 
+#max sharpe
 max_sharpe = df.loc[df['sharpe_ratio']==df['sharpe_ratio'].max()]
+plt.scatter(x=max_sharpe['risk'],y=max_sharpe['returns'],c='r',marker='*',s=500)
+#min_risk
+min_risk = df.loc[df['risk']==df['risk'].min()]
+plt.scatter(x=min_risk['risk'],y=min_risk['returns'],c='r',marker='X',s=500)
+#동일 비중
+weights = np.ones(len(stock_list))
+weights /=np.sum(weights)
+returns = np.dot(weights, annual_ret)
+risk = np.sqrt(np.dot(weights.T,np.dot(annual_cov,weights)))
+plt.scatter(x=risk,y=returns,c='r',marker='v',s=500)
+
