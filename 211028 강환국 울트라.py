@@ -3,6 +3,8 @@ import pandas as pd
 from pandas import Series, DataFrame
 from quant_functions import thinning_data_asc, thinning_data_des
 from quant_functions import *
+from DBUpdater import *
+import matplotlib.pyplot as plt
 
 # 시가총액 하위 10%
  #  data = pd.read_excel('test.xlsx', idex_col = 'A', parse_cols = item)
@@ -22,20 +24,20 @@ GPA ="과거 GP/A (%)"
 모멘텀_6개월 = "6개월 등락률 (%)"
 모멘텀_3개월 = "3개월 등락률 (%)"
 모멘텀_1개월 = "1개월 등락률 (%)"
-순이익QOQ = "순이익 21년2Q QOQ" #순이익QOQ = "순이익 21년2Q(E) QOQ"
-순이익YOY = "순이익 21년2Q YOY" #순이익YOY = "순이익 21년2Q(E) YOY"
-영업이익QOQ = "영업이익 21년2Q QOQ" #영업이익QOQ = "영업이익 21년2Q(E) QOQ"
-영업이익YOY = "영업이익 21년2Q YOY" #영업이익YOY = "영업이익 21년2Q(E) YOY"
+순이익QOQ = "순이익 21년3Q(E) QOQ" #순이익QOQ = "순이익 21년2Q(E) QOQ"
+순이익YOY = "순이익 21년3Q(E) YOY" #순이익YOY = "순이익 21년2Q(E) YOY"
+영업이익QOQ = "영업이익 21년3Q(E) QOQ" #영업이익QOQ = "영업이익 21년2Q(E) QOQ"
+영업이익YOY = "영업이익 21년3Q(E) YOY" #영업이익YOY = "영업이익 21년2Q(E) YOY"
 자산증가율 = '자산증가율 (최근분기)'
 주가변동성 = '주가 변동성'
 거래대금 = "거래대금 (20일평균 억)"
 EV_EBITDA = "과거 EV/EBITDA (%)"
 시총EBITDA = "시가총액/ebitda"
-FILE = 'quantking211029.csv'   #181026, 191022등으로 back test 가능
+FILE = 'quantking211130.csv'   #181026, 191022등으로 back test 가능
 FILEdate = FILE[9:15]
-종목수 = 20
+종목수 = 30
 시가총액하위 = 20 #시가총액 하위 퍼센또
-FILENAME = "211029_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
+FILENAME = "211130_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
 FILE_SAVE = "{FILENAME}_포트.xlsx".format(FILENAME=FILENAME)
 FILE_backtest = "{FILENAME}_backtest.xlsx".format(FILENAME=FILENAME)
 FILE_backtest = "{FILENAME}_backtest.xlsx".format(FILENAME=FILENAME)
@@ -59,6 +61,9 @@ for item in data.index:
 
 print('지주사 제거후')
 print(len(data.index))
+
+
+
 #중국 주식 제거
 for item in data.index:
     if item[1] == "9":
@@ -71,7 +76,6 @@ print(len(data.index))
 모멘텀6개월 = len(data.index)
 print(len(data.index), 모멘텀6개월/총종목)'''
 
-print(data[data['회사명'].str.contains("한익스프레스")])
 #거래대금 생각안하고..
 #data = data[data[거래대금]>0.1]
 #print('거래대금 1천 이상 선별후')
@@ -80,12 +84,15 @@ print(data[data['회사명'].str.contains("한익스프레스")])
 #data = data[data[부채]<75]
 data = data[data[차입금비율]<200]
 print('차입금 비율 200%이하 선별후')
-print(len(data.index))
-print(data[data['회사명'].str.contains("한익스프레스")])
 #시가총액 하위
 data = ltoh_percent(data, '시가총액 (억)', 시가총액하위)
 #data = data[data['시가총액 (억)']<550] #시가 총액 10%는 너무 작아서..
 print('시가총액 {시가} 선별후'.format(시가=시가총액하위))
+print(len(data.index))
+
+#금융주 제거
+data= data[data['업종 (대)']!='금융']
+print('금융주 제거후')
 print(len(data.index))
 
 
@@ -105,12 +112,16 @@ print(len(data.index))
 
 #Fscore
 data = data[data['F스코어 지배주주순익>0 여부']>0.5]
+print(f'F score 지배주주순익>0 후 {len(data.index)}')
 data = data[data['F스코어 영업활동현금흐름>0 여부']>0.5]
-data = data[data['F스코어 신주발행X 여부']>0.5]
-print('F score 선별후')
+print(f'F score 영업활동현금흐름>0 후 {len(data.index)}')
+#data = data[data['F스코어 신주발행X 여부']>0.5]
+#print(f'F score 신주발행x 후 {len(data.index)}')
+
+#관리종목 제외
+data = data[data['관리 종목 =1']!=1]
+print('관리종목 제거후')
 print(len(data.index))
-
-
 
 #data = data[data[부채]>20]
 # PBR 0.2 이하 제외, 시가총액 하위 20%
@@ -161,9 +172,32 @@ data.insert(len(data.columns),"total rank",sum_rank)
 newdata.insert(1,"GP/A-rank",GPA_rank)
 newdata.insert(1,"total rank",sum_rank)'''
 data = data.sort_values(by=['total rank'])
-
 data.to_excel(FILE_SAVE, "w")
 
+#해당 포트폴리오의 추세확인
+stocklist = data.head(종목수).index.tolist()
+for i in range(0,len(stocklist)):
+    stocklist[i]=stocklist[i].replace("A","")
+price_list = MarketDB()
+stk_price = price_list.get_daily_price_list(stocklist,start_date='2021-01-01',end_date='2021-11-30')
+print(stk_price)
+stk_price_수익 = stk_price/stk_price.iloc[0]
+stk_price_수익['전체평균수익'] = stk_price_수익.mean(axis=1)
+stk_price_수익['MA10'] = stk_price_수익['전체평균수익'].rolling(window=10).mean()
+stk_price_수익['MA20'] = stk_price_수익['전체평균수익'].rolling(window=20).mean()
+stk_price_수익['MA60'] = stk_price_수익['전체평균수익'].rolling(window=60).mean()
+
+plt.figure(figsize=(20,15))
+plt.rc('font', size=20)
+plt.plot(stk_price_수익.index, stk_price_수익['전체평균수익'],marker='o',markersize=5, label='return avg', linewidth=4, color='black')
+plt.plot(stk_price_수익.index, stk_price_수익['MA10'], color = 'red',label='MA10')
+plt.plot(stk_price_수익.index, stk_price_수익['MA20'], color = 'green',label='MA20')
+plt.plot(stk_price_수익.index, stk_price_수익['MA60'], color = 'blue',label='MA60')
+plt.plot(stk_price_수익.index, stk_price_수익['전체평균수익'],marker='o',markersize=3)
+plt.grid(True)
+plt.legend()
+
+'''
 stocklist = data.head(종목수).index.tolist()
 for i in range(0,len(stocklist)):
     stocklist[i]=stocklist[i].replace("A","")
@@ -171,8 +205,11 @@ for i in range(0,len(stocklist)):
 #data11 = 변동성_naver(stocklist,240,30)
 #month_data = month_naver_fromto(stocklist,24,52)
 
+
+
 from quant_functions import *
 month_data = month_naver_fromto_better(stocklist,'2021-07-22','2021-09-26')
 
 data1 = back_test(month_data, 0) #cash ratio:0-1.0
 data1.to_excel(FILE_backtest, "w")
+'''
