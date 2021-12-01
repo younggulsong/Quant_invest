@@ -5,6 +5,7 @@ from quant_functions import thinning_data_asc, thinning_data_des
 from quant_functions import *
 from DBUpdater import *
 import matplotlib.pyplot as plt
+import datetime
 
 # 시가총액 하위 10%
  #  data = pd.read_excel('test.xlsx', idex_col = 'A', parse_cols = item)
@@ -179,24 +180,35 @@ stocklist = data.head(종목수).index.tolist()
 for i in range(0,len(stocklist)):
     stocklist[i]=stocklist[i].replace("A","")
 price_list = MarketDB()
-stk_price = price_list.get_daily_price_list(stocklist,start_date='2021-01-01',end_date='2021-11-30')
+stk_price = price_list.get_daily_price_list(stocklist,start_date='2021-05-01',end_date='2021-12-01')
 print(stk_price)
 stk_price_수익 = stk_price/stk_price.iloc[0]
 stk_price_수익['전체평균수익'] = stk_price_수익.mean(axis=1)
 stk_price_수익['MA10'] = stk_price_수익['전체평균수익'].rolling(window=10).mean()
 stk_price_수익['MA20'] = stk_price_수익['전체평균수익'].rolling(window=20).mean()
 stk_price_수익['MA60'] = stk_price_수익['전체평균수익'].rolling(window=60).mean()
+stk_price_수익['MACD'] = stk_price_수익['전체평균수익'].rolling(window=12).mean()-stk_price_수익['전체평균수익'].rolling(window=26).mean()
+stk_price_수익['MACD_signal'] = stk_price_수익['MACD'].rolling(window=9).mean()
+stk_price_수익['MACD_osc'] = stk_price_수익['MACD']-stk_price_수익['MACD_signal']
 
-plt.figure(figsize=(20,15))
+
+plt.figure(figsize=(18,14))
+p1 = plt.subplot(2,1,1)
+plt.title('first screen_price moving')
 plt.rc('font', size=20)
-plt.plot(stk_price_수익.index, stk_price_수익['전체평균수익'],marker='o',markersize=5, label='return avg', linewidth=4, color='black')
+plt.plot(stk_price_수익.index, stk_price_수익['전체평균수익'],marker='o',markersize=5, label='return avg', linewidth=3, color='gray')
 plt.plot(stk_price_수익.index, stk_price_수익['MA10'], color = 'red',label='MA10')
 plt.plot(stk_price_수익.index, stk_price_수익['MA20'], color = 'green',label='MA20')
 plt.plot(stk_price_수익.index, stk_price_수익['MA60'], color = 'blue',label='MA60')
-plt.plot(stk_price_수익.index, stk_price_수익['전체평균수익'],marker='o',markersize=3)
 plt.grid(True)
 plt.legend()
-
+plt.xlim([stk_price_수익.index[0],stk_price_수익.index[-1]+datetime.timedelta(days=20)])
+p2 = plt.subplot(2,1,2)
+plt.grid(True)
+plt.bar(stk_price_수익.index,stk_price_수익['MACD_osc'], color='m',label='MACD-HIST')
+plt.plot(stk_price_수익.index,stk_price_수익['MACD'], color='black',label='MACD')
+plt.plot(stk_price_수익.index,stk_price_수익['MACD_signal'],'g--',label='MACD-Signal')
+plt.xlim([stk_price_수익.index[0],stk_price_수익.index[-1]+datetime.timedelta(days=20)])
 '''
 stocklist = data.head(종목수).index.tolist()
 for i in range(0,len(stocklist)):
