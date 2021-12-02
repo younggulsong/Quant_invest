@@ -219,7 +219,7 @@ hynix = prices.get_daily_price('000660',start_date='2019-12-31',end_date='2020-1
 
 db = DBUpdater()
 db.update_comp_info()
-db.update_daily_price(30)
+db.update_daily_price(2)
 '''
 
 
