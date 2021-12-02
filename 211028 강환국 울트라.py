@@ -36,7 +36,7 @@ EV_EBITDA = "과거 EV/EBITDA (%)"
 시총EBITDA = "시가총액/ebitda"
 FILE = 'quantking211130.csv'   #181026, 191022등으로 back test 가능
 FILEdate = FILE[9:15]
-종목수 = 30
+종목수 = 20
 시가총액하위 = 20 #시가총액 하위 퍼센또
 FILENAME = "211130_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
 FILE_SAVE = "{FILENAME}_포트.xlsx".format(FILENAME=FILENAME)
@@ -180,14 +180,14 @@ stocklist = data.head(종목수).index.tolist()
 for i in range(0,len(stocklist)):
     stocklist[i]=stocklist[i].replace("A","")
 price_list = MarketDB()
-stk_price = price_list.get_daily_price_list(stocklist,start_date='2021-05-01',end_date='2021-12-01')
+stk_price = price_list.get_daily_price_list(stocklist,start_date='2019-10-01',end_date='2021-12-01')
 print(stk_price)
 stk_price_수익 = stk_price/stk_price.iloc[0]
 stk_price_수익['전체평균수익'] = stk_price_수익.mean(axis=1)
 stk_price_수익['MA10'] = stk_price_수익['전체평균수익'].rolling(window=10).mean()
 stk_price_수익['MA20'] = stk_price_수익['전체평균수익'].rolling(window=20).mean()
 stk_price_수익['MA60'] = stk_price_수익['전체평균수익'].rolling(window=60).mean()
-stk_price_수익['MACD'] = stk_price_수익['전체평균수익'].rolling(window=12).mean()-stk_price_수익['전체평균수익'].rolling(window=26).mean()
+stk_price_수익['MACD'] = stk_price_수익['전체평균수익'].rolling(window=10).mean()-stk_price_수익['전체평균수익'].rolling(window=20).mean()
 stk_price_수익['MACD_signal'] = stk_price_수익['MACD'].rolling(window=9).mean()
 stk_price_수익['MACD_osc'] = stk_price_수익['MACD']-stk_price_수익['MACD_signal']
 
