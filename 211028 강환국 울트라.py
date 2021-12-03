@@ -42,7 +42,7 @@ EV_EBITDA = "과거 EV/EBITDA (%)"
 시총EBITDA = "시가총액/ebitda"
 FILE = 'quantking211202.csv'   #181026, 191022등으로 back test 가능
 FILEdate = FILE[9:15]
-종목수 = 20
+종목수 = 30
 시가총액하위 = 20 #시가총액 하위 퍼센또
 FILENAME = "211130_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
 FILE_SAVE = "{FILENAME}_포트.xlsx".format(FILENAME=FILENAME)
@@ -187,7 +187,7 @@ for i in range(0,len(stocklist)):
     stocklist[i]=stocklist[i].replace("A","")
 price_list = MarketDB()
 today = datetime.datetime.now().strftime('%Y-%m-%d')
-stk_price = price_list.get_daily_price_list(stocklist,start_date='2020-01-01',end_date=today)
+stk_price = price_list.get_daily_price_list(stocklist,start_date='2018-01-01',end_date=today)
 
 print(stk_price)
 stk_price_수익 = stk_price/stk_price.iloc[0]
