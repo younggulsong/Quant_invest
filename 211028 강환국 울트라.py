@@ -6,6 +6,12 @@ from quant_functions import *
 from DBUpdater import *
 import matplotlib.pyplot as plt
 import datetime
+#DataBase update
+'''
+db = DBUpdater()
+db.update_comp_info()
+db.update_daily_price(2)
+'''
 
 # 시가총액 하위 10%
  #  data = pd.read_excel('test.xlsx', idex_col = 'A', parse_cols = item)
@@ -181,7 +187,7 @@ for i in range(0,len(stocklist)):
     stocklist[i]=stocklist[i].replace("A","")
 price_list = MarketDB()
 today = datetime.datetime.now().strftime('%Y-%m-%d')
-stk_price = price_list.get_daily_price_list(stocklist,start_date='2017-01-01',end_date=today)
+stk_price = price_list.get_daily_price_list(stocklist,start_date='2020-01-01',end_date=today)
 
 print(stk_price)
 stk_price_수익 = stk_price/stk_price.iloc[0]
@@ -220,9 +226,6 @@ for i in range(0,len(stocklist)):
 #data11 = 변동성_naver(stocklist,240,30)
 #month_data = month_naver_fromto(stocklist,24,52)
 
-db = DBUpdater()
-db.update_comp_info()
-db.update_daily_price(2)
 
 from quant_functions import *
 month_data = month_naver_fromto_better(stocklist,'2021-07-22','2021-09-26')
