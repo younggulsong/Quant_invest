@@ -10,7 +10,7 @@ import datetime
 '''
 db = DBUpdater()
 db.update_comp_info()
-db.update_daily_price(2)
+db.update_daily_price(7)
 '''
 
 # 시가총액 하위 10%
@@ -31,20 +31,20 @@ GPA ="과거 GP/A (%)"
 모멘텀_6개월 = "6개월 등락률 (%)"
 모멘텀_3개월 = "3개월 등락률 (%)"
 모멘텀_1개월 = "1개월 등락률 (%)"
-순이익QOQ = "순이익 21년3Q(E) QOQ" #순이익QOQ = "순이익 21년2Q(E) QOQ"
-순이익YOY = "순이익 21년3Q(E) YOY" #순이익YOY = "순이익 21년2Q(E) YOY"
-영업이익QOQ = "영업이익 21년3Q(E) QOQ" #영업이익QOQ = "영업이익 21년2Q(E) QOQ"
-영업이익YOY = "영업이익 21년3Q(E) YOY" #영업이익YOY = "영업이익 21년2Q(E) YOY"
+순이익QOQ = "순이익 21년3Q QOQ" #순이익QOQ = "순이익 21년2Q(E) QOQ"
+순이익YOY = "순이익 21년3Q YOY" #순이익YOY = "순이익 21년2Q(E) YOY"
+영업이익QOQ = "영업이익 21년3Q QOQ" #영업이익QOQ = "영업이익 21년2Q(E) QOQ"
+영업이익YOY = "영업이익 21년3Q YOY" #영업이익YOY = "영업이익 21년2Q(E) YOY"
 자산증가율 = '자산증가율 (최근분기)'
 주가변동성 = '주가 변동성'
 거래대금 = "거래대금 (20일평균 억)"
 EV_EBITDA = "과거 EV/EBITDA (%)"
 시총EBITDA = "시가총액/ebitda"
-FILE = 'quantking211202.csv'   #181026, 191022등으로 back test 가능
+FILE = 'quantking211206.csv'   #181026, 191022등으로 back test 가능
 FILEdate = FILE[9:15]
-종목수 = 30
+종목수 = 20
 시가총액하위 = 20 #시가총액 하위 퍼센또
-FILENAME = "211130_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
+FILENAME = "211206_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
 FILE_SAVE = "{FILENAME}_포트.xlsx".format(FILENAME=FILENAME)
 FILE_backtest = "{FILENAME}_backtest.xlsx".format(FILENAME=FILENAME)
 FILE_backtest = "{FILENAME}_backtest.xlsx".format(FILENAME=FILENAME)
@@ -187,7 +187,7 @@ for i in range(0,len(stocklist)):
     stocklist[i]=stocklist[i].replace("A","")
 price_list = MarketDB()
 today = datetime.datetime.now().strftime('%Y-%m-%d')
-stk_price = price_list.get_daily_price_list(stocklist,start_date='2018-01-01',end_date=today)
+stk_price = price_list.get_daily_price_list(stocklist,start_date='2020-05-01',end_date=today)
 
 print(stk_price)
 stk_price_수익 = stk_price/stk_price.iloc[0]
@@ -199,6 +199,8 @@ stk_price_수익['MA60'] = stk_price_수익['전체평균수익'].rolling(window
 stk_price_수익['MACD'] = stk_price_수익['전체평균수익'].rolling(window=12).mean()-stk_price_수익['전체평균수익'].rolling(window=26).mean()
 stk_price_수익['MACD_signal'] = stk_price_수익['MACD'].rolling(window=9).mean()
 stk_price_수익['MACD_osc'] = stk_price_수익['MACD']-stk_price_수익['MACD_signal']
+stk_price_수익['pc_upper'] = stk_price_수익['전체평균수익'].rolling(window=5).max().shift(1)
+stk_price_수익['pc_lower'] = stk_price_수익['전체평균수익'].rolling(window=5).min().shift(1)
 
 
 plt.figure(figsize=(18,14))
@@ -207,8 +209,10 @@ plt.title('first screen_price moving')
 plt.rc('font', size=20)
 plt.plot(stk_price_수익.index, stk_price_수익['전체평균수익'],marker='o',markersize=5, label='return avg', linewidth=3, color='gray')
 plt.plot(stk_price_수익.index, stk_price_수익['MA10'], color = 'red',label='MA12')
-plt.plot(stk_price_수익.index, stk_price_수익['MA20'], color = 'green',label='MA26')
+plt.plot(stk_price_수익.index, stk_price_수익['MA20'], color = 'orange',label='MA26')
 plt.plot(stk_price_수익.index, stk_price_수익['MA60'], color = 'blue',label='MA60')
+plt.plot(stk_price_수익.index, stk_price_수익['pc_upper'], color = 'green',label='pc_upper')
+plt.plot(stk_price_수익.index, stk_price_수익['pc_lower'], color = 'green',label='pc_lower')
 plt.grid(True)
 plt.legend()
 plt.xlim([stk_price_수익.index[0],stk_price_수익.index[-1]+datetime.timedelta(days=20)])
