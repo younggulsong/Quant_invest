@@ -10,7 +10,7 @@ import datetime
 '''
 db = DBUpdater()
 db.update_comp_info()
-db.update_daily_price(7)
+db.update_daily_price(2)
 '''
 
 # 시가총액 하위 10%
@@ -187,7 +187,7 @@ for i in range(0,len(stocklist)):
     stocklist[i]=stocklist[i].replace("A","")
 price_list = MarketDB()
 today = datetime.datetime.now().strftime('%Y-%m-%d')
-stk_price = price_list.get_daily_price_list(stocklist,start_date='2020-05-01',end_date=today)
+stk_price = price_list.get_daily_price_list(stocklist,start_date='2021-05-01',end_date=today)
 
 print(stk_price)
 stk_price_수익 = stk_price/stk_price.iloc[0]
