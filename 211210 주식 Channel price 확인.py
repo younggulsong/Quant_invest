@@ -13,14 +13,15 @@ db.update_comp_info()
 db.update_daily_price(2)
 '''
 
-stock = '로보로보'
+stock = '에디슨EV'
 price_list = MarketDB()
 
 code = price_list.companies[stock]
 
 price_list = MarketDB()
 today = datetime.datetime.now().strftime('%Y-%m-%d')
-stk_price = price_list.get_daily_price(code,start_date='2021-01-01',end_date=today)
+start_day = (datetime.datetime.now() - datetime.timedelta(days=60)).strftime('%Y-%m-%d')
+stk_price = price_list.get_daily_price(code,start_date=start_day,end_date=today)
 
 
 stk_price['MA10'] = stk_price['close'].rolling(window=12).mean()
