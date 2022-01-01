@@ -10,7 +10,7 @@ import datetime
 '''
 db = DBUpdater()
 db.update_comp_info()
-db.update_daily_price(1)
+db.update_daily_price(2)
 '''
 
 # 시가총액 하위 10%
@@ -40,7 +40,7 @@ GPA ="과거 GP/A (%)"
 거래대금 = "거래대금 (20일평균 억)"
 EV_EBITDA = "과거 EV/EBITDA (%)"
 시총EBITDA = "시가총액/ebitda"
-FILE = 'quantking211221.csv' #직전은 211209   #181026, 191022등으로 back test 가능
+FILE = 'quantking211229.csv' #직전은 211209   #181026, 191022등으로 back test 가능
 FILEdate = FILE[9:15]
 종목수 = 20
 시가총액하위 = 20 #시가총액 하위 퍼센또
@@ -187,7 +187,7 @@ for i in range(0,len(stocklist)):
     stocklist[i]=stocklist[i].replace("A","")
 price_list = MarketDB()
 today = datetime.datetime.now().strftime('%Y-%m-%d')
-stk_price = price_list.get_daily_price_list(stocklist,start_date='2020-12-01',end_date=today)
+stk_price = price_list.get_daily_price_list(stocklist,start_date='2020-03-03',end_date=today)
 
 print(stk_price)
 stk_price_수익 = stk_price/stk_price.iloc[0]
