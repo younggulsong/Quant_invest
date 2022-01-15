@@ -489,6 +489,58 @@ def weekly_변동성_pc(filename):  # price channel과 관련된 전략
     return price
 
 
+def price_channel(price, pc_upper_day, pc_lower_day,sell_ratio):  # price channel과 관련된 전략
+
+    수수료율 = 0.0015
+    status = 0
+    price['일일수익률'] = 1.
+
+    price['일일수익률'] = 1.
+    price['누적수익률'] = 1.
+    price['진입당수익률'] = 1.
+    price['max대비손실'] = 0.
+    price['기본수익률'] = price['close'] / price['close'][0]
+    price['MACD'] = price['close'].rolling(window=12).mean() - price['close'].rolling(window=26).mean()
+    price['MACD_signal'] = price['MACD'].rolling(window=9).mean()
+    price['pc_upper'] = price.rolling(window=pc_upper_day)['high'].max().shift(1)
+    price['pc_lower'] = price.rolling(window=pc_lower_day)['low'].min().shift(1)
+
+    for i, date in enumerate(price.index):
+
+        if i < 7:  # 초기 7일은 전주가 없으므로 거래 제외
+            continue
+        day_1 = price.index[i - 1]
+        price.loc[day_1, 'max대비손실'] = -100 * (1 - price.loc[day_1, '누적수익률'] / price.loc[:day_1, '누적수익률'].max())
+
+        if status == 0:  # 안산 상태이면 high 값이 upper channel 보다 높을 때 upper channel로 구매
+            if price.loc[date, 'high'] > price.loc[date, 'pc_upper']:
+                price.loc[date, '일일수익률'] = price.loc[date, 'close'] / price.loc[date, 'pc_upper']
+                price.loc[date, '누적수익률'] = price.loc[date, '일일수익률'] * price.loc[day_1, '누적수익률']
+                진입가격 = price.loc[date, 'pc_upper']
+                status = 1
+                continue
+            else:
+                price.loc[date, '일일수익률'] = 1.
+                price.loc[date, '누적수익률'] = price.loc[date, '일일수익률'] * price.loc[day_1, '누적수익률']
+                continue
+
+        if status == 1:  # 산 상태이면 low 값이 below channel 보다 높을 때 lower channel로 판매
+            sellprice = sell_ratio * price.loc[date, 'pc_lower'] + (1 - sell_ratio) * price.loc[
+                date, 'pc_upper']  # upper와 lower의 중간값
+            if price.loc[date, 'low'] < sellprice:
+                price.loc[date, '일일수익률'] = sellprice / price.loc[date, 'open'] * ((1 - 수수료율) ** 2)
+                price.loc[date, '누적수익률'] = price.loc[date, '일일수익률'] * price.loc[day_1, '누적수익률']
+                price.loc[date, '진입당수익률'] = sellprice / 진입가격 * ((1 - 수수료율) ** 2)
+                status = 0  # 손절하여 매도 상태
+                continue
+            else:
+                price.loc[date, '일일수익률'] = price.loc[date, 'close'] / price.loc[date, 'open']
+                price.loc[date, '누적수익률'] = price.loc[date, '일일수익률'] * price.loc[day_1, '누적수익률']
+                continue
+
+    return price
+
+
 def weekly_변동성_pc_investpy(coinname, from_date, to_date, pc_upper_day, pc_lower_day,
                            sell_ratio):  # price channel과 관련된 전략
 

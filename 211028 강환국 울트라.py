@@ -15,6 +15,7 @@ db.update_daily_price(2)
 
 # 시가총액 하위 10%
  #  data = pd.read_excel('test.xlsx', idex_col = 'A', parse_cols = item)
+start_day = '2021-10-01'
 PER = "발표 분기 PER"
 #PER = "발표 PER"
 PBR = "발표 PBR"
@@ -40,9 +41,9 @@ GPA ="과거 GP/A (%)"
 거래대금 = "거래대금 (20일평균 억)"
 EV_EBITDA = "과거 EV/EBITDA (%)"
 시총EBITDA = "시가총액/ebitda"
-FILE = 'quantking211229.csv' #직전은 211209   #181026, 191022등으로 back test 가능
+FILE = 'quantking211221.csv' #직전은 211209   #181026, 191022등으로 back test 가능
 FILEdate = FILE[9:15]
-종목수 = 20
+종목수 = 25
 시가총액하위 = 20 #시가총액 하위 퍼센또
 FILENAME = "211221_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
 FILE_SAVE = "{FILENAME}_포트.xlsx".format(FILENAME=FILENAME)
@@ -187,7 +188,7 @@ for i in range(0,len(stocklist)):
     stocklist[i]=stocklist[i].replace("A","")
 price_list = MarketDB()
 today = datetime.datetime.now().strftime('%Y-%m-%d')
-stk_price = price_list.get_daily_price_list(stocklist,start_date='2020-03-03',end_date=today)
+stk_price = price_list.get_daily_price_list(stocklist,start_date=start_day,end_date=today)
 
 print(stk_price)
 stk_price_수익 = stk_price/stk_price.iloc[0]
@@ -199,8 +200,8 @@ stk_price_수익['MA60'] = stk_price_수익['전체평균수익'].rolling(window
 stk_price_수익['MACD'] = stk_price_수익['전체평균수익'].rolling(window=12).mean()-stk_price_수익['전체평균수익'].rolling(window=26).mean()
 stk_price_수익['MACD_signal'] = stk_price_수익['MACD'].rolling(window=9).mean()
 stk_price_수익['MACD_osc'] = stk_price_수익['MACD']-stk_price_수익['MACD_signal']
-stk_price_수익['pc_upper'] = stk_price_수익['전체평균수익'].rolling(window=5).max().shift(1)
-stk_price_수익['pc_lower'] = stk_price_수익['전체평균수익'].rolling(window=5).min().shift(1)
+stk_price_수익['pc_upper'] = stk_price_수익['전체평균수익'].rolling(window=20).max().shift(1)
+stk_price_수익['pc_lower'] = stk_price_수익['전체평균수익'].rolling(window=10).min().shift(1)
 
 
 plt.figure(figsize=(18,14))
