@@ -10,7 +10,7 @@ from Investstrategy import *
 from pykrx import stock  #https://defineall.tistory.com/746
 import pykrx
 
-stock = '삼성전자'
+stock = 'SK하이닉스'
 price_list = MarketDB()
 #price = pykrx.stock.get_market_ohlcv_by_date()
 #df = pykrx.stock.get_market_ohlcv_by_date("20150720", "20150810", "005930","m")

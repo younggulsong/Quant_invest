@@ -7,15 +7,15 @@ from DBUpdater import *
 import matplotlib.pyplot as plt
 import datetime
 #DataBase update
-'''
+
 db = DBUpdater()
 db.update_comp_info()
-db.update_daily_price(2)
-'''
+db.update_daily_price(3)
+
 
 # 시가총액 하위 10%
  #  data = pd.read_excel('test.xlsx', idex_col = 'A', parse_cols = item)
-start_day = '2021-10-01'
+start_day = '2021-12-09'
 PER = "발표 분기 PER"
 #PER = "발표 PER"
 PBR = "발표 PBR"
@@ -41,9 +41,9 @@ GPA ="과거 GP/A (%)"
 거래대금 = "거래대금 (20일평균 억)"
 EV_EBITDA = "과거 EV/EBITDA (%)"
 시총EBITDA = "시가총액/ebitda"
-FILE = 'quantking211221.csv' #직전은 211209   #181026, 191022등으로 back test 가능
+FILE = 'quantking211209.csv' #직전은 211209   #181026, 191022등으로 back test 가능
 FILEdate = FILE[9:15]
-종목수 = 25
+종목수 = 20
 시가총액하위 = 20 #시가총액 하위 퍼센또
 FILENAME = "211221_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
 FILE_SAVE = "{FILENAME}_포트.xlsx".format(FILENAME=FILENAME)
