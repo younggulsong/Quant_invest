@@ -9,7 +9,7 @@ import mplfinance as mpf #https://github.com/matplotlib/mplfinance/blob/master/e
 for ticker in stock.get_index_ticker_list(market='KOSDAQ'):
     print(ticker, stock.get_index_ticker_name(ticker))
 
-df = stock.get_index_ohlcv("20180109","20220409","2001")
+df = stock.get_index_ohlcv("20180109","20220511","2001")
 df.columns = ['open','high','low','close','volume','거래대금']
 df['변동성'] = (df['high']-df['low'])/df['close']
 df['min변동성'] = df['변동성'].rolling(window=3).min()

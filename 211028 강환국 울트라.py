@@ -10,7 +10,7 @@ import datetime
 
 db = DBUpdater()
 db.update_comp_info()
-db.update_daily_price(3)
+db.update_daily_price(5)
 
 
 # 시가총액 하위 10%
@@ -41,7 +41,7 @@ GPA ="과거 GP/A (%)"
 거래대금 = "거래대금 (20일평균 억)"
 EV_EBITDA = "과거 EV/EBITDA (%)"
 시총EBITDA = "시가총액/ebitda"
-FILE = 'quantking211209.csv' #직전은 211209   #181026, 191022등으로 back test 가능
+FILE = 'quantking220323.csv' #직전은 211209   #181026, 191022등으로 back test 가능
 FILEdate = FILE[9:15]
 종목수 = 20
 시가총액하위 = 20 #시가총액 하위 퍼센또
@@ -193,7 +193,7 @@ stk_price = price_list.get_daily_price_list(stocklist,start_date=start_day,end_d
 print(stk_price)
 stk_price_수익 = stk_price/stk_price.iloc[0]
 stk_price_수익['전체평균수익'] = stk_price_수익.mean(axis=1)
-stk_price_수익.to_excel(f"{today}, 울트라 전략 확인.xlsx")
+#stk_price_수익.to_excel(f"{today}, 울트라 전략 확인.xlsx")
 stk_price_수익['MA10'] = stk_price_수익['전체평균수익'].rolling(window=12).mean()
 stk_price_수익['MA20'] = stk_price_수익['전체평균수익'].rolling(window=26).mean()
 stk_price_수익['MA60'] = stk_price_수익['전체평균수익'].rolling(window=60).mean()
