@@ -10,7 +10,7 @@ import datetime
 
 db = DBUpdater()
 db.update_comp_info()
-db.update_daily_price(5)
+db.update_daily_price(10)
 
 
 # 시가총액 하위 10%
@@ -41,11 +41,11 @@ GPA ="과거 GP/A (%)"
 거래대금 = "거래대금 (20일평균 억)"
 EV_EBITDA = "과거 EV/EBITDA (%)"
 시총EBITDA = "시가총액/ebitda"
-FILE = 'quantking220323.csv' #직전은 211209   #181026, 191022등으로 back test 가능
+FILE = 'quantking220801.csv' #직전은 211209   #181026, 191022등으로 back test 가능
 FILEdate = FILE[9:15]
 종목수 = 20
 시가총액하위 = 20 #시가총액 하위 퍼센또
-FILENAME = "211221_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
+FILENAME = "220627_울트라, 선별 소형주{시가총액하위} 퍼이하, {종목수} 개 from {FILEdate}".format(FILEdate=FILEdate,종목수 = 종목수,시가총액하위=시가총액하위) # per이나 ev나 크게 상관없는것으로 보임..
 FILE_SAVE = "{FILENAME}_포트.xlsx".format(FILENAME=FILENAME)
 FILE_backtest = "{FILENAME}_backtest.xlsx".format(FILENAME=FILENAME)
 FILE_backtest = "{FILENAME}_backtest.xlsx".format(FILENAME=FILENAME)
